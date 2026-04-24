@@ -259,6 +259,99 @@ button:disabled {
   gap: 10px;
 }
 
+.rating-summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 14px;
+  color: var(--muted);
+}
+
+.rating-label {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.rating-count {
+  font-size: 0.92rem;
+}
+
+.rating-controls {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.rating-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ghost-button {
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(148, 163, 184, 0.08);
+  color: var(--text);
+}
+
+.ghost-button:hover {
+  background: rgba(148, 163, 184, 0.16);
+}
+
+.rating-details {
+  margin-bottom: 16px;
+  padding: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 18px;
+  background: rgba(9, 14, 29, 0.6);
+}
+
+.rating-details-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  color: var(--muted);
+}
+
+.rating-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.rating-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.rating-item:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.rating-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.rating-loading {
+  margin: 0;
+  color: var(--muted);
+}
+
 .hidden {
   display: none;
 }
@@ -323,6 +416,8 @@ button:disabled {
   }
 
   .card-actions,
+  .rating-actions,
+  .rating-item,
   .hero-actions,
   .pagination,
   .form-actions,
