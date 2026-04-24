@@ -1,6 +1,4 @@
-const API_URL = "https://proyecto1webbackend-production.up.railway.app/";
-
-fetch(`${API_URL}/series`)
+const API_BASE_URL = "https://proyecto1webbackend-production.up.railway.app";
 
 const state = {
   page: 1,
