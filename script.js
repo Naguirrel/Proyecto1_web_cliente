@@ -24,7 +24,8 @@ const elements = {
   imageInput: document.getElementById("imageInput"),
   cancelEditButton: document.getElementById("cancelEditButton"),
   refreshButton: document.getElementById("refreshButton"),
-  exportButton: document.getElementById("exportButton"),
+  exportCsvButton: document.getElementById("exportCsvButton"),
+  exportExcelButton: document.getElementById("exportExcelButton"),
   searchInput: document.getElementById("searchInput"),
   sortSelect: document.getElementById("sortSelect"),
   limitSelect: document.getElementById("limitSelect"),
@@ -70,7 +71,8 @@ elements.nextButton.addEventListener("click", () => {
 });
 
 elements.refreshButton.addEventListener("click", fetchSeries);
-elements.exportButton.addEventListener("click", exportExcel);
+elements.exportCsvButton.addEventListener("click", exportCSV);
+elements.exportExcelButton.addEventListener("click", exportExcel);
 elements.cancelEditButton.addEventListener("click", resetForm);
 
 elements.form.addEventListener("submit", async (event) => {
@@ -156,7 +158,8 @@ async function fetchSeries() {
 }
 
 function renderSeries(seriesList) {
-  elements.exportButton.disabled = seriesList.length === 0;
+  elements.exportCsvButton.disabled = seriesList.length === 0;
+  elements.exportExcelButton.disabled = seriesList.length === 0;
 
   if (seriesList.length === 0) {
     elements.seriesGrid.innerHTML = `
@@ -418,6 +421,32 @@ function exportExcel() {
   } catch (error) {
     setStatus(`Could not export Excel: ${error.message}`);
   }
+}
+
+function exportCSV() {
+  if (state.data.length === 0) {
+    setStatus("There is no data to export on the current page.");
+    return;
+  }
+
+  const headers = ["ID", "Title", "Description", "Episodes", "Image URL", "Average Rating", "Rating Count"];
+  const rows = state.data.map((item) => [
+    item.id,
+    item.title,
+    item.description,
+    item.episodes,
+    item.image,
+    Number(item.rating_average || 0).toFixed(1),
+    item.rating_count || 0,
+  ]);
+
+  const csvContent = [headers, ...rows]
+    .map((row) => row.map(csvEscape).join(","))
+    .join("\r\n");
+
+  const blob = new Blob(["\uFEFF", csvContent], { type: "text/csv;charset=utf-8;" });
+  triggerDownload(blob, "series.csv");
+  setStatus("CSV exported successfully.");
 }
 
 function buildWorkbookArchive(sheetName, rows) {
@@ -703,6 +732,11 @@ function formatDate(value) {
   }
 
   return date.toLocaleString();
+}
+
+function csvEscape(value) {
+  const text = String(value ?? "");
+  return `"${text.replace(/"/g, '""')}"`;
 }
 
 function isSupportedHttpUrl(value) {
