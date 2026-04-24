@@ -86,6 +86,11 @@ elements.form.addEventListener("submit", async (event) => {
     return;
   }
 
+  if (!isSupportedHttpUrl(payload.image)) {
+    setStatus("The image URL must start with http:// or https://.");
+    return;
+  }
+
   const endpoint = state.editingId ? `/series/${state.editingId}` : "/series";
   const method = state.editingId ? "PUT" : "POST";
   const wasEditing = Boolean(state.editingId);
@@ -149,6 +154,8 @@ async function fetchSeries() {
 }
 
 function renderSeries(seriesList) {
+  elements.exportButton.disabled = seriesList.length === 0;
+
   if (seriesList.length === 0) {
     elements.seriesGrid.innerHTML = `
       <div class="empty-state">
@@ -161,7 +168,7 @@ function renderSeries(seriesList) {
 
   elements.seriesGrid.innerHTML = seriesList.map((item) => `
     <article class="series-card">
-      <img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.title)}" onerror="this.src='https://placehold.co/600x400?text=No+Image';" />
+      <img src="${escapeHTML(getSafeImageUrl(item.image))}" alt="${escapeHTML(item.title)}" onerror="this.src='https://placehold.co/600x400?text=No+Image';" />
       <div class="card-content">
         <div class="card-meta">${item.episodes} episodes</div>
         <h3>${escapeHTML(item.title)}</h3>
@@ -259,23 +266,46 @@ function exportCSV() {
 
   const csvContent = [headers, ...rows]
     .map((row) => row.map(csvEscape).join(","))
-    .join("\n");
+    .join("\r\n");
 
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const blob = new Blob(["\uFEFF", csvContent], { type: "text/csv;charset=utf-8;" });
+
+  if (window.navigator.msSaveOrOpenBlob) {
+    window.navigator.msSaveOrOpenBlob(blob, "series.csv");
+    setStatus("CSV exported successfully.");
+    return;
+  }
+
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
   link.download = "series.csv";
+  link.style.display = "none";
   document.body.appendChild(link);
   link.click();
   link.remove();
-  URL.revokeObjectURL(url);
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   setStatus("CSV exported successfully.");
 }
 
 function csvEscape(value) {
   const text = String(value ?? "");
   return `"${text.replace(/"/g, '""')}"`;
+}
+
+function isSupportedHttpUrl(value) {
+  try {
+    const url = new URL(String(value).trim());
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function getSafeImageUrl(value) {
+  return isSupportedHttpUrl(value)
+    ? value
+    : "https://placehold.co/600x400?text=No+Image";
 }
 
 function setStatus(message) {
@@ -300,3 +330,7 @@ function escapeHTML(value) {
 }
 
 fetchSeries();
+
+if (window.location.protocol === "file:") {
+  setStatus("Open the frontend from a local server (http://...), not directly as a file.");
+}
