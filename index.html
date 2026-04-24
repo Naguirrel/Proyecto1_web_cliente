@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Series Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Vanilla JS + Go REST API</p>
+        <h1>Series Manager</h1>
+        <p class="hero-text">
+          Manage your favorite series with pagination, search, sorting, and CSV export.
+        </p>
+      </div>
+      <div class="hero-actions">
+        <button id="refreshButton" class="secondary-button" type="button">Refresh</button>
+        <button id="exportButton" class="primary-button" type="button">Export CSV</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel controls-panel">
+        <div class="panel-header">
+          <h2>Explore Series</h2>
+          <p>Filter and sort the catalog in real time.</p>
+        </div>
+
+        <div class="toolbar">
+          <label class="field">
+            <span>Search</span>
+            <input id="searchInput" type="text" placeholder="Search by title or description" />
+          </label>
+
+          <label class="field">
+            <span>Sort by</span>
+            <select id="sortSelect">
+              <option value="id-asc">ID low-high</option>
+              <option value="id-desc">ID high-low</option>
+              <option value="title-asc">Title A-Z</option>
+              <option value="title-desc">Title Z-A</option>
+              <option value="episodes-asc">Episodes low-high</option>
+              <option value="episodes-desc">Episodes high-low</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Items per page</span>
+            <select id="limitSelect">
+              <option value="4">4</option>
+              <option value="6" selected>6</option>
+              <option value="8">8</option>
+              <option value="10">10</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="status-row">
+          <span id="statusText">Loading series...</span>
+          <span id="pageInfo">Page 1</span>
+        </div>
+      </section>
+
+      <section class="panel form-panel">
+        <div class="panel-header">
+          <h2 id="formTitle">Add New Series</h2>
+          <p id="formSubtitle">Fill in all fields to create a new record.</p>
+        </div>
+
+        <form id="seriesForm" class="series-form">
+          <input id="seriesId" type="hidden" />
+
+          <label class="field">
+            <span>Title</span>
+            <input id="titleInput" type="text" required />
+          </label>
+
+          <label class="field">
+            <span>Description</span>
+            <textarea id="descriptionInput" rows="4" required></textarea>
+          </label>
+
+          <label class="field">
+            <span>Episodes</span>
+            <input id="episodesInput" type="number" min="1" required />
+          </label>
+
+          <label class="field">
+            <span>Image URL</span>
+            <input id="imageInput" type="url" required />
+          </label>
+
+          <div class="form-actions">
+            <button class="primary-button" type="submit">Save Series</button>
+            <button id="cancelEditButton" class="secondary-button hidden" type="button">Cancel Edit</button>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <section class="panel">
+      <div id="seriesGrid" class="series-grid"></div>
+
+      <div class="pagination">
+        <button id="prevButton" class="secondary-button" type="button">Previous</button>
+        <button id="nextButton" class="secondary-button" type="button">Next</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
